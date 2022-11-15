@@ -25,8 +25,6 @@ pluginBundle {
     vcsUrl = property("VCS_URL").toString()
     description = property("DESCRIPTION").toString()
     tags = listOf(
-        "plugin",
-        "gradle",
         "keepass",
         "secrets",
         "properties",
