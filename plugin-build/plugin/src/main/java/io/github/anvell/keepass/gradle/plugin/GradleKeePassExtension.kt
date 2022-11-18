@@ -2,15 +2,19 @@
 
 package io.github.anvell.keepass.gradle.plugin
 
+import app.keemobile.kotpass.constants.BasicField
 import app.keemobile.kotpass.cryptography.EncryptedValue
 import app.keemobile.kotpass.database.Credentials
 import app.keemobile.kotpass.database.KeePassDatabase
 import app.keemobile.kotpass.database.decode
 import app.keemobile.kotpass.database.findEntryBy
+import app.keemobile.kotpass.database.modifiers.binaries
 import app.keemobile.kotpass.models.Entry
+import okio.ByteString.Companion.toByteString
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
 
@@ -23,6 +27,80 @@ abstract class GradleKeePassExtension @Inject constructor(
     val sourceFile: RegularFileProperty = objects.fileProperty()
     val keyfile: RegularFileProperty = objects.fileProperty()
     val password: Property<String> = objects.property(String::class.java)
+
+    /**
+     * Searches for [Entry] with [title] and extracts binary data
+     * with [binaryName] to [parentDir].
+     * File name is based on SHA256 hash of the file.
+     *
+     * @param title [Entry] field with [BasicField.Title] key.
+     * @param parentDir new directory will be created if it does not exist.
+     * @param binaryName file name of binary data attached to the [Entry].
+     * @return [File] object referencing extracted file.
+     */
+    fun entryBinary(
+        title: String,
+        parentDir: File,
+        binaryName: String
+    ): File = database
+        .findEntryBy { fields.title?.content == title }
+        ?.let { entryBinary(it, parentDir, binaryName) }
+        ?: error("Cannot find entry with title: $title.")
+
+    /**
+     * Searches for [Entry] which matches given [predicate] and extracts
+     * binary data with [binaryName] to [parentDir].
+     * File name is based on SHA256 hash of the file.
+     *
+     * @param predicate allows to match [Entry] using custom checks.
+     * @param parentDir new directory will be created if it does not exist.
+     * @param binaryName file name of binary data attached to the [Entry].
+     * @return [File] object referencing extracted file.
+     */
+    fun entryBinary(
+        predicate: Entry.() -> Boolean,
+        parentDir: File,
+        binaryName: String
+    ): File = database
+        .findEntryBy(predicate)
+        ?.let { entryBinary(it, parentDir, binaryName) }
+        ?: error("Cannot find entry by predicate.")
+
+    private fun entryBinary(
+        entry: Entry,
+        parentDir: File,
+        binaryName: String
+    ): File {
+        val binary = entry
+            .binaries
+            .find { it.name == binaryName }
+            ?: error("Cannot find binary: $binaryName.")
+        if (!parentDir.exists()) parentDir.mkdirs()
+
+        val outputFile = File(parentDir, binary.hash.hex())
+        if (outputFile.exists()) {
+            val hash = outputFile
+                .inputStream()
+                .use(FileInputStream::readBytes)
+                .toByteString()
+                .sha256()
+
+            if (hash == binary.hash) {
+                return outputFile
+            }
+        }
+
+        val rawData = database
+            .binaries[binary.hash]
+            ?.getContent()
+            ?: error("Database does not contain binary: $binaryName.")
+
+        outputFile
+            .outputStream()
+            .use { it.write(rawData) }
+
+        return outputFile
+    }
 
     fun fromEntry(
         withTitle: String,
