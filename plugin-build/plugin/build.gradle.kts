@@ -1,3 +1,5 @@
+@file:Suppress("DSL_SCOPE_VIOLATION")
+
 plugins {
     kotlin("jvm")
     `java-gradle-plugin`
@@ -36,6 +38,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(gradleApi())
     implementation(libs.kotpass)
+    implementation(libs.okio)
 
     testImplementation(libs.junit)
 }
