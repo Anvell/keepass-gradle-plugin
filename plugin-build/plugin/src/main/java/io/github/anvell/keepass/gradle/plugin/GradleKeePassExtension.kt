@@ -10,6 +10,7 @@ import app.keemobile.kotpass.database.decode
 import app.keemobile.kotpass.database.findEntryBy
 import app.keemobile.kotpass.database.modifiers.binaries
 import app.keemobile.kotpass.models.Entry
+import io.github.anvell.keepass.gradle.plugin.extensions.toShortHexHash
 import okio.ByteString.Companion.toByteString
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
@@ -77,7 +78,7 @@ abstract class GradleKeePassExtension @Inject constructor(
             ?: error("Cannot find binary: $binaryName.")
         if (!parentDir.exists()) parentDir.mkdirs()
 
-        val outputFile = File(parentDir, binary.hash.hex())
+        val outputFile = File(parentDir, binary.hash.toShortHexHash())
         if (outputFile.exists()) {
             val hash = outputFile
                 .inputStream()
