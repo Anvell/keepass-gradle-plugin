@@ -24,6 +24,7 @@ abstract class GradleKeePassExtension @Inject constructor(
 ) {
     private val objects = project.objects
     private val database by lazy { loadVault() }
+    private val entriesByTitle: MutableMap<String, Entry> = mutableMapOf()
 
     val sourceFile: RegularFileProperty = objects.fileProperty()
     val keyfile: RegularFileProperty = objects.fileProperty()
@@ -43,10 +44,13 @@ abstract class GradleKeePassExtension @Inject constructor(
         title: String,
         parentDir: File,
         binaryName: String
-    ): File = database
-        .findEntryBy { fields.title?.content == title }
-        ?.let { entryBinary(it, parentDir, binaryName) }
-        ?: error("Cannot find entry with title: $title.")
+    ): File = entriesByTitle
+        .getOrElse(title) {
+            database
+                .findEntryBy { fields.title?.content == title }
+                ?.also { entriesByTitle[title] = it }
+                ?: error("Cannot find entry with title: $title.")
+        }.let { entryBinary(it, parentDir, binaryName) }
 
     /**
      * Searches for [Entry] which matches a given [predicate] and extracts
@@ -112,10 +116,13 @@ abstract class GradleKeePassExtension @Inject constructor(
     fun entryField(
         title: String,
         field: String
-    ): String = database
-        .findEntryBy { fields.title?.content == title }
-        ?.let { entryField(it, field) }
-        ?: error("Cannot find entry with title: $title.")
+    ): String = entriesByTitle
+        .getOrElse(title) {
+            database
+                .findEntryBy { fields.title?.content == title }
+                ?.also { entriesByTitle[title] = it }
+                ?: error("Cannot find entry with title: $title.")
+        }.let { entryField(it, field) }
 
     /**
      * Searches for [Entry] which matches a given [predicate]
