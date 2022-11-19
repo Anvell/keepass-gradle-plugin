@@ -11,7 +11,7 @@ gradleKeePass {
     password.set("test")
 }
 
-println("Value: ${gradleKeePass.fromEntry("One", BasicField.Password())}")
+println("Value: ${gradleKeePass.entryField("One", BasicField.Password())}")
 
 val sampleFile = gradleKeePass.entryBinary(
     predicate = { fields.title?.content == "Two" },

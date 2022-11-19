@@ -49,7 +49,7 @@ abstract class GradleKeePassExtension @Inject constructor(
         ?: error("Cannot find entry with title: $title.")
 
     /**
-     * Searches for [Entry] which matches given [predicate] and extracts
+     * Searches for [Entry] which matches a given [predicate] and extracts
      * binary data with [binaryName] to [parentDir].
      * File name is based on SHA256 hash of the file.
      *
@@ -103,26 +103,41 @@ abstract class GradleKeePassExtension @Inject constructor(
         return outputFile
     }
 
-    fun fromEntry(
-        withTitle: String,
+    /**
+     * Searches for [Entry] with [title] and attempts
+     * to retrieve [field] content.
+     *
+     * @return [field] content.
+     */
+    fun entryField(
+        title: String,
         field: String
-    ) = fromEntry(
-        predicate = { fields.title?.content == withTitle },
-        field = field
-    )
+    ): String = database
+        .findEntryBy { fields.title?.content == title }
+        ?.let { entryField(it, field) }
+        ?: error("Cannot find entry with title: $title.")
 
-    fun fromEntry(
+    /**
+     * Searches for [Entry] which matches a given [predicate]
+     * and attempts to retrieve [field] content.
+     *
+     * @return [field] content.
+     */
+    fun entryField(
         predicate: Entry.() -> Boolean,
         field: String
-    ): String {
-        val entry = database
-            .findEntryBy(predicate)
-            ?: error("Cannot find entry.")
+    ): String = database
+        .findEntryBy(predicate)
+        ?.let { entryField(it, field) }
+        ?: error("Cannot find entry by predicate.")
 
-        return entry
-            .fields[field]
-            ?.content
-            ?: error("Cannot find field with key: $field.")
+    private fun entryField(
+        entry: Entry,
+        field: String
+    ): String = with(entry) {
+        requireNotNull(fields[field]?.content) {
+            "Entry '${fields.title?.content}' does not have field with key: $field."
+        }
     }
 
     private fun loadVault(): KeePassDatabase {
