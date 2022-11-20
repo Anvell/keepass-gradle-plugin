@@ -20,7 +20,7 @@ Apply plugin to your module:
 
 ``` kotlin
 plugins {
-    id "io.github.anvell.keepass.gradle.plugin" version "0.1.0"
+    id "io.github.anvell.keepass.gradle.plugin" version "0.2.0"
 }
 ```
 
