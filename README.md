@@ -61,7 +61,7 @@ val secret = gradleKeePass.fromEntry(
 
 Attached files are placed under `parentDir`. File name is based on content hash and re-checked every time function is invoked:
 
-```
+``` kotlin
 val sampleFile = gradleKeePass.entryBinary(
     title = "Two",
     parentDir = File(project.buildDir, "binaries"),
