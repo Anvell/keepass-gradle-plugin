@@ -1,6 +1,6 @@
 # KeePass Gradle Plugin 🔑
 
-Essential [**Gradle**](https://gradle.org/) plugin for managing project secrets using [**KeePass**](https://keepass.info/) format. This allows to store encrypted vaults along with repository which simplifies collaboration between developers as there no need to share secrets separately each time they are changed or populated with new entries.
+Essential [**Gradle**](https://gradle.org) plugin for managing project secrets with [**KeePass**](https://keepass.info) format. Format IO is provided by ⭐️ [**kotpass**](https://github.com/keemobile/kotpass) libary. Encrypted databases could be stored on desktop, pendrive or remote repository which simplifies collaboration between developers. Plugin allows to extract secrets/binaries and reference them in build scripts.
 
 ## Setup
 
@@ -25,6 +25,7 @@ plugins {
 ```
 
 ## How to use
+### Configure extension
 
 Define path to **KeePass** database file along with password and/or keyfile.
 
@@ -36,11 +37,13 @@ gradleKeePass {
 }
 ```
 
-Secrets are extracted from entry fields. Specific entry can be located by title:
+### Retrieve entry fields
+
+Secrets are retrieved from entry fields. Specific entry can be located by title:
 
 ``` kotlin
 val secret = gradleKeePass.fromEntry(
-    withTitle = "One",
+    title = "One",
     field = BasicField.Password()
 )
 ```
@@ -54,11 +57,24 @@ val secret = gradleKeePass.fromEntry(
 )
 ```
 
+### Retrieve attached files
+
+Attached files are placed under `parentDir`. File name is based on content hash and re-checked every time function is invoked:
+
+```
+val sampleFile = gradleKeePass.entryBinary(
+    title = "Two",
+    parentDir = File(project.buildDir, "binaries"),
+    binaryName = "sample.txt"
+)
+```
+
 ## Features
 
 - Supports newest KeePass format versions up to **4.1**.
 - AES256/ChaCha20 encryption with Argon2/AES KDF.
 - Easily organise secrets in groups/entries and edit with any KeePass client of choise.
+- Safely store sensitive files and retrieve when needed.
 - Simplify collaboration by avoiding bloated gradle properties files.
 
 ## Contributing
