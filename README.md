@@ -1,28 +1,18 @@
 # KeePass Gradle Plugin 🔑
 
-Essential [**Gradle**](https://gradle.org) plugin for managing project secrets with [**KeePass**](https://keepass.info) format. Format IO is provided by ⭐️ [**kotpass**](https://github.com/keemobile/kotpass) libary. Encrypted databases could be stored on desktop, pendrive or remote repository which simplifies collaboration between developers. Plugin allows to extract secrets/binaries and reference them in build scripts.
+Essential [**Gradle**](https://gradle.org) plugin for managing project secrets with [**KeePass**](https://keepass.info) format. Format IO is provided by ⭐️ [**kotpass**](https://github.com/keemobile/kotpass) libary. Encrypted databases could be stored on desktop, pendrive or remote repository which simplifies collaboration between developers. Plugin can retrieve secrets/binaries which could be referenced in build scripts.
 
 ## Setup
 
-Add Jitpack dependency for Gradle plugins:
-
-``` kotlin
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-    }
-}
-```
-
-Apply plugin to your module:
+Using the [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block):
 
 ``` kotlin
 plugins {
-    id "io.github.anvell.keepass.gradle.plugin" version "0.2.0"
+    id("io.github.anvell.keepass.gradle.plugin") version "0.2.0"
 }
 ```
+
+Check [Gradle plugins](https://plugins.gradle.org/plugin/io.github.anvell.keepass.gradle.plugin) portal.
 
 ## How to use
 ### Configure extension
