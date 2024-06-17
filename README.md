@@ -8,7 +8,7 @@ Using the [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#s
 
 ``` kotlin
 plugins {
-    id("io.github.anvell.keepass.gradle.plugin") version "0.2.0"
+    id("io.github.anvell.keepass.gradle.plugin") version "0.3.0"
 }
 ```
 
