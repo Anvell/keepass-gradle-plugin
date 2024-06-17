@@ -15,10 +15,16 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-      - name: Cache Gradle Caches
-        uses: gradle/gradle-build-action@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 11
+
       - name: Run Gradle tasks
         run: ./gradlew preMerge --continue
+
       - name: Publish on Plugin Portal
         run: ./gradlew --project-dir plugin-build setupPluginUploadFromEnvironment publishPlugins
         if: success()
