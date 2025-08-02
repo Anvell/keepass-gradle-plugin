@@ -63,7 +63,7 @@ val sampleFile = gradleKeePass.entryBinary(
 
 - Supports newest KeePass format versions up to **4.1**.
 - AES256/ChaCha20 encryption with Argon2/AES KDF.
-- Easily organise secrets in groups/entries and edit with any KeePass client of choise.
+- Easily organise secrets in groups/entries and edit with any KeePass client of choice.
 - Safely store sensitive files and retrieve when needed.
 - Simplify collaboration by avoiding bloated gradle properties files.
 
