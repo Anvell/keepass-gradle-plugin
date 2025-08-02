@@ -15,7 +15,7 @@ println("Value: ${gradleKeePass.entryField("One", BasicField.Password())}")
 
 val sampleFile = gradleKeePass.entryBinary(
     title = "Two",
-    parentDir = File(project.buildDir, "binaries"),
+    parentDir = File(project.projectDir, "tmp"),
     binaryName = "sample.txt"
 )
 

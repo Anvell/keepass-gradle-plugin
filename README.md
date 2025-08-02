@@ -54,7 +54,7 @@ Attached files are placed under `parentDir`. File name is based on content hash 
 ``` kotlin
 val sampleFile = gradleKeePass.entryBinary(
     title = "Two",
-    parentDir = File(project.buildDir, "binaries"),
+    parentDir = File(project.projectDir, "binaries"),
     binaryName = "sample.txt"
 )
 ```
