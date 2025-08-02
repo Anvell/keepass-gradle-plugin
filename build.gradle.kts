@@ -1,5 +1,3 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
-
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 
@@ -30,7 +28,7 @@ subprojects {
     }
 
     detekt {
-        config = rootProject.files("config/detekt/detekt.yml")
+        config.from(rootProject.files("config/detekt/detekt.yml"))
     }
 }
 
@@ -50,7 +48,8 @@ tasks.withType<DependencyUpdatesTask> {
 fun String.isNonStable() = "^[0-9,.v-]+(-r)?$".toRegex().matches(this).not()
 
 tasks.register("clean", Delete::class.java) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
+    delete(File("example", "tmp"))
 }
 
 tasks.register("reformatAll") {
