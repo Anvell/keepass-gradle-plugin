@@ -18,26 +18,24 @@ java {
 }
 
 gradlePlugin {
+    website = property("WEBSITE").toString()
+    vcsUrl = property("VCS_URL").toString()
+
     plugins {
         create(property("ID").toString()) {
             id = property("ID").toString()
             implementationClass = property("IMPLEMENTATION_CLASS").toString()
             version = property("VERSION").toString()
             displayName = property("DISPLAY_NAME").toString()
+            description = property("DESCRIPTION").toString()
+            tags = listOf(
+                "keepass",
+                "secrets",
+                "properties",
+                "credentials"
+            )
         }
     }
-}
-
-pluginBundle {
-    website = property("WEBSITE").toString()
-    vcsUrl = property("VCS_URL").toString()
-    description = property("DESCRIPTION").toString()
-    tags = listOf(
-        "keepass",
-        "secrets",
-        "properties",
-        "credentials"
-    )
 }
 
 dependencies {
